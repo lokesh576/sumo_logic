@@ -1,0 +1,6 @@
+.terraform
+.env
+*.zip
+.DS_Store
+config
+*.hcl

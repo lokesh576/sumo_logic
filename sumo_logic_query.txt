@@ -1,0 +1,15 @@
+#identify queries with responseTimeMs > 3000ms
+
+_source="lambda" and _collector="lambda" 
+| json field=_raw "message.path", "message.responseTimeMs" as path, responseTimeMs nodrop
+ | where path = "/api/data" and toNumber(responseTimeMs) > 3000
+ | fields _messageTime, path, responseTimeMs, _raw
+| sort by _messageTime desc
+
+
+# aggregate no of logs with responseTimeMs > 3000ms
+# schedule this query and set action to invoke lambda thru webhooks
+_source=lambda
+| json field=_raw "message.path","message.responseTimeMs" as path, responseTimeMs nodrop
+| where path="/api/data" and toNumber(responseTimeMs) > 3000
+| count as slow_api_data_over_3s
